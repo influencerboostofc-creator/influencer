@@ -279,7 +279,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs, where, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // Set Firestore log level to debug
@@ -485,7 +485,7 @@ registrationFormEl.addEventListener('submit', async (e) => {
 
     try {
         const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
-        await addDoc(registrationsRef, formData);
+        await setDoc(doc(registrationsRef, uniqueId), formData);
         showMessageModal('Cadastro Enviado!', `Seu cadastro foi enviado com sucesso. Guarde este código para consultar o status: <br><br><strong>${uniqueId}</strong>`, true);
         clearAndHideFormModal();
     } catch (error) {
@@ -510,17 +510,16 @@ checkStatusBtn.addEventListener('click', async () => {
     statusDisplayEl.className = 'mt-4 text-center font-medium text-gray-500 text-lg min-h-[3rem] transition-all duration-300';
 
     try {
-        const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
-        const q = query(registrationsRef, where("id", "==", uniqueId));
-        const snapshot = await getDocs(q);
+        const registrationRef = doc(db, `artifacts/${appId}/public/data/registrations`, uniqueId);
+        const docSnap = await getDoc(registrationRef);
         
-        if (snapshot.empty) {
+        if (!docSnap.exists()) {
             statusDisplayEl.textContent = 'Cadastro não encontrado.';
             statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
             return;
         }
 
-        const registrationData = snapshot.docs[0].data();
+        const registrationData = docSnap.data();
         let statusColor = '';
 
         if (registrationData.status === 'Pendente') {
@@ -529,20 +528,19 @@ checkStatusBtn.addEventListener('click', async () => {
             statusDisplayEl.className = `mt-4 text-center font-medium ${statusColor} text-lg min-h-[3rem] transition-all duration-300`;
         } else if (registrationData.status === 'Aprovado') {
             statusColor = 'text-green-500';
-            const membersRef = collection(db, `artifacts/${appId}/public/data/members`);
-            const memberQuery = query(membersRef, where("registrationId", "==", registrationData.id));
-            const memberSnapshot = await getDocs(memberQuery);
+            const memberRef = doc(db, `artifacts/${appId}/public/data/members`, registrationData.id);
+            const memberDoc = await getDoc(memberRef);
             let memberUsername = '';
 
-            if (memberSnapshot.empty) {
+            if (!memberDoc.exists()) {
                 const randomNumbers = Math.floor(100 + Math.random() * 900);
                 memberUsername = `${randomNumbers}-BOOSTMEMBERS`;
-                await addDoc(membersRef, {
+                await setDoc(memberRef, {
                     registrationId: registrationData.id,
                     username: memberUsername
                 });
             } else {
-                memberUsername = memberSnapshot.docs[0].data().username;
+                memberUsername = memberDoc.data().username;
             }
 
             showMessageModal(
@@ -854,10 +852,11 @@ async function updatePaymentStatus(paymentId, status) {
 
 // Member Area Logic
 function setupMemberAreaListener(registrationId) {
-    const tasksQuery = query(collection(db, `artifacts/${appId}/public/data/tasks`), where("memberId", "==", registrationId));
+    const tasksQuery = query(collection(db, `artifacts/${appId}/public/data/tasks`));
     onSnapshot(tasksQuery, (snapshot) => {
         const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderMemberTasks(tasks, memberTasksListEl);
+        const memberTasks = tasks.filter(task => task.memberId === registrationId);
+        renderMemberTasks(memberTasks, memberTasksListEl);
     });
 }
 
