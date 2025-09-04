@@ -149,6 +149,8 @@
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="companies">Empresas</button>
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="employees">Funcionários</button>
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="jobs">Gerenciar Vagas</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="tasks">Gerenciar Tarefas</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="payments">Pagamentos</button>
         </div>
 
         <!-- Tabs Content -->
@@ -193,14 +195,88 @@
                 </form>
                 <div id="jobs-list" class="space-y-4"></div>
             </div>
+            <!-- Tasks Tab -->
+            <div id="tab-tasks" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Gerenciar Tarefas</h3>
+                <form id="task-form" class="bg-gray-50 p-6 rounded-xl shadow-inner mb-6 space-y-4">
+                    <div>
+                        <label for="task-title" class="block text-sm font-medium text-gray-700">Título da Tarefa</label>
+                        <input type="text" id="task-title" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="task-description" class="block text-sm font-medium text-gray-700">Descrição</label>
+                        <textarea id="task-description" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label for="task-price" class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                        <input type="number" step="0.01" id="task-price" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="task-member-id" class="block text-sm font-medium text-gray-700">ID do Membro (XXX-BOOSTMEMBERS)</label>
+                        <input type="text" id="task-member-id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                        Atribuir Tarefa
+                    </button>
+                </form>
+                <div id="tasks-list" class="space-y-4"></div>
+            </div>
+            <!-- Payments Tab -->
+            <div id="tab-payments" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Solicitações de Pagamento</h3>
+                <div id="payments-list" class="space-y-4"></div>
+            </div>
         </div>
     </div>
+    
+    <!-- Member Area -->
+    <div id="member-area" class="hidden text-center transition-all duration-500">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Área de Membros</h2>
+            <button id="member-logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">Sair</button>
+        </div>
+        <p class="text-lg text-gray-600 mb-6">Bem-vindo(a), <span id="member-username" class="font-bold text-blue-600"></span>!</p>
+        <p class="text-sm text-gray-500">Aqui você pode visualizar e gerenciar suas tarefas.</p>
+        
+        <div id="member-tasks-list" class="mt-8 space-y-4 text-left"></div>
+
+        <div id="payment-modal" class="modal-overlay hidden">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg mx-4 relative">
+                <button id="payment-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors">&times;</button>
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Solicitar Pagamento</h2>
+                <p class="text-gray-600 mb-4">O pagamento será feito via PIX em até 3 horas úteis.</p>
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label for="pix-key" class="block text-sm font-medium text-gray-700">Chave PIX</label>
+                        <input type="text" id="pix-key" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <input type="hidden" id="task-id-to-pay">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Modal -->
+    <div id="message-modal" class="modal-overlay hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 text-center relative">
+            <button id="message-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors">&times;</button>
+            <h2 id="message-title" class="text-2xl font-bold mb-4 text-gray-800"></h2>
+            <p id="message-body" class="text-gray-600 mb-6 leading-relaxed"></p>
+            <button id="message-ok-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                OK
+            </button>
+        </div>
+    </div>
+
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // Set Firestore log level to debug
@@ -250,6 +326,8 @@ onAuthStateChanged(auth, async (user) => {
 // --- DOM Elements ---
 const landingPageEl = document.getElementById('landing-page');
 const adminPanelEl = document.getElementById('admin-panel');
+const memberAreaEl = document.getElementById('member-area');
+const memberUsernameEl = document.getElementById('member-username');
 
 const formModalEl = document.getElementById('form-modal');
 const formTitleEl = document.getElementById('form-title');
@@ -277,11 +355,18 @@ const companyListEl = document.getElementById('company-list');
 const employeeListEl = document.getElementById('employee-list');
 const jobsListEl = document.getElementById('jobs-list');
 const jobFormEl = document.getElementById('job-form');
+const tasksListEl = document.getElementById('tasks-list');
+const taskFormEl = document.getElementById('task-form');
+const paymentsListEl = document.getElementById('payments-list');
+
+const memberTasksListEl = document.getElementById('member-tasks-list');
+const paymentModalEl = document.getElementById('payment-modal');
+const paymentFormEl = document.getElementById('payment-form');
 
 // --- Helper Functions ---
 function showMessageModal(title, body, isSuccess = true) {
     messageTitleEl.textContent = title;
-    messageBodyEl.textContent = body;
+    messageBodyEl.innerHTML = body;
     messageModalEl.classList.remove('hidden');
 }
 
@@ -291,6 +376,7 @@ function hideMessageModal() {
 
 function showAdminPanel() {
     landingPageEl.classList.add('hidden');
+    memberAreaEl.classList.add('hidden');
     adminLoginModalEl.classList.add('hidden');
     adminPanelEl.classList.remove('hidden');
     adminLoginErrorEl.classList.add('hidden');
@@ -300,6 +386,14 @@ function showAdminPanel() {
 function showLandingPage() {
     landingPageEl.classList.remove('hidden');
     adminPanelEl.classList.add('hidden');
+    memberAreaEl.classList.add('hidden');
+}
+
+function showMemberArea(username) {
+    landingPageEl.classList.add('hidden');
+    adminPanelEl.classList.add('hidden');
+    memberAreaEl.classList.remove('hidden');
+    memberUsernameEl.textContent = username;
 }
 
 function clearAndHideFormModal() {
@@ -343,12 +437,18 @@ document.getElementById('admin-login-btn').addEventListener('click', () => {
     adminLoginModalEl.classList.remove('hidden');
 });
 document.getElementById('logout-btn').addEventListener('click', showLandingPage);
+document.getElementById('member-logout-btn').addEventListener('click', showLandingPage);
+document.getElementById('payment-modal-close').addEventListener('click', () => paymentModalEl.classList.add('hidden'));
 
 document.getElementById('admin-password-btn').addEventListener('click', () => {
     const password = adminPasswordInput.value;
-    // NOTE: Hardcoded password for this example. Not secure for production.
     if (password === '8078') {
-        showAdminPanel();
+        if (auth.currentUser) {
+            showAdminPanel();
+        } else {
+            adminLoginErrorEl.textContent = 'Aguarde a inicialização do sistema.';
+            adminLoginErrorEl.classList.remove('hidden');
+        }
     } else {
         adminLoginErrorEl.textContent = 'Senha incorreta.';
         adminLoginErrorEl.classList.remove('hidden');
@@ -357,8 +457,8 @@ document.getElementById('admin-password-btn').addEventListener('click', () => {
 
 registrationFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!isAuthReady) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema...', false);
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'O sistema está se inicializando. Por favor, tente novamente em alguns segundos.', false);
         return;
     }
     const formType = formTypeInput.value;
@@ -392,8 +492,8 @@ registrationFormEl.addEventListener('submit', async (e) => {
 });
 
 checkStatusBtn.addEventListener('click', async () => {
-    if (!isAuthReady) {
-        statusDisplayEl.textContent = 'Aguarde...';
+    if (!auth.currentUser) {
+        statusDisplayEl.textContent = 'Aguarde a inicialização do sistema.';
         return;
     }
     const uniqueId = statusIdInput.value.trim().toUpperCase();
@@ -408,22 +508,54 @@ checkStatusBtn.addEventListener('click', async () => {
 
     try {
         const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
-        const querySnapshot = await getDocs(registrationsRef);
+        const q = query(registrationsRef);
+        const snapshot = await getDocs(q);
         let found = false;
-        let registrationStatus = 'Não encontrado';
-        querySnapshot.forEach(doc => {
+        let registrationData = null;
+        snapshot.forEach(doc => {
             if (doc.data().id === uniqueId) {
-                registrationStatus = doc.data().status;
+                registrationData = doc.data();
                 found = true;
             }
         });
 
         if (found) {
             let statusColor = '';
-            if (registrationStatus === 'Pendente') statusColor = 'text-yellow-500';
-            else if (registrationStatus === 'Aprovado') statusColor = 'text-green-500';
-            else if (registrationStatus === 'Reprovado') statusColor = 'text-red-500';
-            statusDisplayEl.textContent = `Status: ${registrationStatus}`;
+            if (registrationData.status === 'Pendente') {
+                statusColor = 'text-yellow-500';
+            } else if (registrationData.status === 'Aprovado') {
+                statusColor = 'text-green-500';
+                const memberId = registrationData.id;
+                const membersRef = collection(db, `artifacts/${appId}/public/data/members`);
+                const memberQuery = query(membersRef, where("registrationId", "==", memberId));
+                const memberSnapshot = await getDocs(memberQuery);
+                let memberUsername = '';
+
+                if (memberSnapshot.empty) {
+                    const randomNumbers = Math.floor(100 + Math.random() * 900);
+                    memberUsername = `${randomNumbers}-BOOSTMEMBERS`;
+                    await addDoc(membersRef, {
+                        registrationId: memberId,
+                        username: memberUsername
+                    });
+                } else {
+                    memberUsername = memberSnapshot.docs[0].data().username;
+                }
+
+                showMessageModal(
+                    'Cadastro Aprovado!',
+                    `Parabéns, seu cadastro foi aprovado! <br><br>Seu usuário da área de membros é: <strong>${memberUsername}</strong><br><br>Você pode acessar a área de membros clicando no botão abaixo.`
+                );
+                statusDisplayEl.innerHTML = `Status: Aprovado <br><button id="acessar-area-membro" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">Acessar Área de Membros</button>`;
+                document.getElementById('acessar-area-membro').addEventListener('click', () => {
+                    showMemberArea(memberUsername);
+                    setupMemberAreaListener(memberId);
+                });
+
+            } else if (registrationData.status === 'Reprovado') {
+                statusColor = 'text-red-500';
+            }
+            statusDisplayEl.innerHTML = `Status: ${registrationData.status}`;
             statusDisplayEl.className = `mt-4 text-center font-medium ${statusColor} text-lg min-h-[3rem] transition-all duration-300`;
         } else {
             statusDisplayEl.textContent = 'Cadastro não encontrado.';
@@ -458,20 +590,30 @@ tabBtns.forEach(btn => {
 // Admin Panel Real-time Listeners
 function setupRealtimeListeners() {
     onSnapshot(collection(db, `artifacts/${appId}/public/data/registrations`), (snapshot) => {
-        const registrations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const registrations = snapshot.docs.map(doc => ({ id: doc.id, docId: doc.id, ...doc.data() }));
         const influencers = registrations.filter(reg => reg.type === 'influencer');
         const companies = registrations.filter(reg => reg.type === 'company');
         const employees = registrations.filter(reg => reg.type === 'employee');
-
+        
         renderRegistrations(influencers, influencerListEl, 'influencer');
         renderRegistrations(companies, companyListEl, 'company');
         renderRegistrations(employees, employeeListEl, 'employee');
     });
 
     onSnapshot(collection(db, `artifacts/${appId}/public/data/jobs`), (snapshot) => {
-        const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const jobs = snapshot.docs.map(doc => ({ id: doc.id, docId: doc.id, ...doc.data() }));
         renderJobs(jobs, jobsListEl);
         updateJobSelect(jobs);
+    });
+
+    onSnapshot(collection(db, `artifacts/${appId}/public/data/tasks`), (snapshot) => {
+        const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderAdminTasks(tasks, tasksListEl);
+    });
+    
+    onSnapshot(collection(db, `artifacts/${appId}/public/data/payments`), (snapshot) => {
+        const payments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderAdminPayments(payments, paymentsListEl);
     });
 }
 
@@ -493,8 +635,8 @@ function renderRegistrations(list, container, type) {
                     <p class="text-sm text-gray-500">Status: <span class="font-semibold">${item.status}</span></p>
                 </div>
                 <div class="space-x-2">
-                    <button class="approve-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}">Aprovar</button>
-                    <button class="disapprove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}">Reprovar</button>
+                    <button class="approve-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.docId}">Aprovar</button>
+                    <button class="disapprove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.docId}">Reprovar</button>
                 </div>
             </div>
             <div class="mt-2 text-sm text-gray-600">
@@ -522,27 +664,14 @@ function renderRegistrations(list, container, type) {
     });
 }
 
-async function updateRegistrationStatus(registrationId, status) {
-    if (!isAuthReady) {
-        console.error("Autenticação não concluída. Tente novamente.");
+async function updateRegistrationStatus(docId, status) {
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
         return;
     }
     try {
-        const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
-        const q = query(registrationsRef);
-        const snapshot = await getDocs(q);
-        let docIdToUpdate = null;
-        snapshot.forEach(doc => {
-            if (doc.data().id === registrationId) {
-                docIdToUpdate = doc.id;
-            }
-        });
-        if (docIdToUpdate) {
-            const docRef = doc(db, `artifacts/${appId}/public/data/registrations`, docIdToUpdate);
-            await updateDoc(docRef, { status });
-        } else {
-            console.error("Documento não encontrado para o ID:", registrationId);
-        }
+        const docRef = doc(db, `artifacts/${appId}/public/data/registrations`, docId);
+        await updateDoc(docRef, { status });
     } catch (error) {
         console.error("Erro ao atualizar status:", error);
     }
@@ -551,8 +680,8 @@ async function updateRegistrationStatus(registrationId, status) {
 // Job Management Logic
 jobFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!isAuthReady) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema...', false);
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema. Por favor, tente novamente em alguns segundos.', false);
         return;
     }
     const jobData = {
@@ -609,6 +738,206 @@ function updateJobSelect(jobs) {
         noJobsMessageEl.classList.remove('hidden');
     }
 }
+
+// Task Management Logic (Admin)
+taskFormEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        return;
+    }
+    const taskData = {
+        title: document.getElementById('task-title').value,
+        description: document.getElementById('task-description').value,
+        price: parseFloat(document.getElementById('task-price').value),
+        memberId: document.getElementById('task-member-id').value,
+        status: 'Pendente',
+        timestamp: new Date()
+    };
+
+    try {
+        const tasksRef = collection(db, `artifacts/${appId}/public/data/tasks`);
+        await addDoc(tasksRef, taskData);
+        showMessageModal('Sucesso!', 'Tarefa atribuída com sucesso!', true);
+        taskFormEl.reset();
+    } catch (error) {
+        console.error("Erro ao atribuir tarefa:", error);
+        showMessageModal('Erro!', 'Ocorreu um erro ao atribuir a tarefa. Verifique se o ID do membro está correto.', false);
+    }
+});
+
+function renderAdminTasks(tasks, container) {
+    container.innerHTML = '';
+    if (tasks.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhuma tarefa encontrada.</p>`;
+        return;
+    }
+    tasks.forEach(task => {
+        const card = document.createElement('div');
+        const statusClass = task.status === 'Aprovada' ? 'bg-green-50' : task.status === 'Recusada' ? 'bg-red-50' : 'bg-white';
+        card.className = `p-4 rounded-xl shadow-sm border border-gray-200 ${statusClass} relative`;
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <h4 class="font-bold text-lg">${task.title}</h4>
+                    <p class="text-sm text-gray-600">Para: <strong>${task.memberId}</strong></p>
+                    <p class="text-sm text-gray-600">Status: <span class="font-semibold">${task.status}</span></p>
+                    <p class="text-sm text-gray-600 mt-2">${task.description}</p>
+                </div>
+                <div class="space-x-2">
+                    <button class="approve-task-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-task-id="${task.id}">Aprovar</button>
+                    <button class="reject-task-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-task-id="${task.id}">Recusar</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    container.querySelectorAll('.approve-task-btn').forEach(btn => {
+        btn.addEventListener('click', () => updateTaskStatus(btn.dataset.taskId, 'Aprovada'));
+    });
+    container.querySelectorAll('.reject-task-btn').forEach(btn => {
+        btn.addEventListener('click', () => updateTaskStatus(btn.dataset.taskId, 'Recusada'));
+    });
+}
+
+async function updateTaskStatus(taskId, status) {
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        return;
+    }
+    try {
+        const taskRef = doc(db, `artifacts/${appId}/public/data/tasks`, taskId);
+        await updateDoc(taskRef, { status });
+    } catch (error) {
+        console.error("Erro ao atualizar status da tarefa:", error);
+    }
+}
+
+// Payments Management Logic (Admin)
+function renderAdminPayments(payments, container) {
+    container.innerHTML = '';
+    if (payments.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhuma solicitação de pagamento encontrada.</p>`;
+        return;
+    }
+    payments.forEach(payment => {
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl shadow-sm border border-gray-200 bg-white relative`;
+        card.innerHTML = `
+            <h4 class="font-bold text-lg">Pagamento para ${payment.memberId}</h4>
+            <p class="text-sm text-gray-600">Valor: R$ ${payment.price.toFixed(2)}</p>
+            <p class="text-sm text-gray-600">Chave PIX: ${payment.pixKey}</p>
+            <p class="text-sm text-gray-600">Status: <span class="font-semibold">${payment.status}</span></p>
+            <p class="text-sm text-gray-500 mt-2">Tarefa: ${payment.taskTitle}</p>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 mt-2 rounded-lg text-sm" data-payment-id="${payment.id}" data-status="Concluído">Marcar como Concluído</button>
+        `;
+        container.appendChild(card);
+    });
+    container.querySelectorAll('[data-status="Concluído"]').forEach(btn => {
+        btn.addEventListener('click', () => updatePaymentStatus(btn.dataset.paymentId, 'Concluído'));
+    });
+}
+
+async function updatePaymentStatus(paymentId, status) {
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        return;
+    }
+    try {
+        const paymentRef = doc(db, `artifacts/${appId}/public/data/payments`, paymentId);
+        await updateDoc(paymentRef, { status });
+        showMessageModal('Sucesso!', 'Status de pagamento atualizado.', true);
+    } catch (error) {
+        console.error("Erro ao atualizar status do pagamento:", error);
+    }
+}
+
+// Member Area Logic
+function setupMemberAreaListener(registrationId) {
+    const tasksQuery = query(collection(db, `artifacts/${appId}/public/data/tasks`), where("memberId", "==", registrationId));
+    onSnapshot(tasksQuery, (snapshot) => {
+        const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderMemberTasks(tasks, memberTasksListEl);
+    });
+}
+
+function renderMemberTasks(tasks, container) {
+    container.innerHTML = '';
+    if (tasks.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhuma tarefa atribuída no momento.</p>`;
+        return;
+    }
+    tasks.forEach(task => {
+        const card = document.createElement('div');
+        const statusClass = task.status === 'Aprovada' ? 'bg-green-50' : task.status === 'Recusada' ? 'bg-red-50' : 'bg-white';
+        card.className = `p-4 rounded-xl shadow-md border border-gray-200 ${statusClass} relative`;
+        
+        let actions = '';
+        if (task.status === 'Aprovada') {
+            actions = `<button class="request-payment-btn bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition transform hover:scale-105" data-task-id="${task.id}" data-task-price="${task.price}" data-task-title="${task.title}">Solicitar Pagamento</button>`;
+        } else if (task.status === 'Pendente') {
+            actions = `<span class="text-yellow-500 font-semibold">Tarefa em Análise</span>`;
+        } else if (task.status === 'Recusada') {
+            actions = `<span class="text-red-500 font-semibold">Tarefa Recusada</span>`;
+        }
+
+        card.innerHTML = `
+            <h4 class="font-bold text-lg">${task.title}</h4>
+            <p class="text-sm text-gray-600 mt-2">${task.description}</p>
+            <div class="mt-4 flex items-center justify-between">
+                <span class="text-sm font-bold text-gray-700">Valor: R$ ${task.price.toFixed(2)}</span>
+                ${actions}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+    container.querySelectorAll('.request-payment-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const taskId = e.target.dataset.taskId;
+            const taskPrice = e.target.dataset.taskPrice;
+            const taskTitle = e.target.dataset.taskTitle;
+            document.getElementById('task-id-to-pay').value = taskId;
+            paymentModalEl.classList.remove('hidden');
+        });
+    });
+}
+
+paymentFormEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pixKey = document.getElementById('pix-key').value;
+    const taskId = document.getElementById('task-id-to-pay').value;
+
+    const taskRef = doc(db, `artifacts/${appId}/public/data/tasks`, taskId);
+    const taskDoc = await getDoc(taskRef);
+    const taskData = taskDoc.data();
+
+    const paymentData = {
+        taskId: taskId,
+        memberId: taskData.memberId,
+        taskTitle: taskData.title,
+        price: taskData.price,
+        pixKey: pixKey,
+        status: 'Pendente',
+        timestamp: new Date()
+    };
+
+    try {
+        const paymentsRef = collection(db, `artifacts/${appId}/public/data/payments`);
+        await addDoc(paymentsRef, paymentData);
+        await updateDoc(taskRef, { status: 'Pagamento Solicitado' });
+        
+        showMessageModal(
+            'Solicitação de Pagamento Enviada!',
+            'Seu pedido de pagamento foi enviado com sucesso.<br>O valor cairá na sua conta PIX em até 3 horas úteis.'
+        );
+        paymentModalEl.classList.add('hidden');
+    } catch (error) {
+        console.error("Erro ao solicitar pagamento:", error);
+        showMessageModal('Erro!', 'Ocorreu um erro ao enviar sua solicitação de pagamento.', false);
+    }
+});
+
 </script>
 
 </body>
