@@ -58,12 +58,12 @@
         </div>
 
         <div class="flex items-center justify-center space-x-4">
-            <input type="text" id="status-id-input" placeholder="Digite seu código de cadastro" class="w-full max-w-md p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
-            <button id="check-status-btn" class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-xl transition transform hover:scale-105">
-                Consultar Status
+            <input type="text" id="member-id-input" placeholder="Digite o ID de membro" class="w-full max-w-md p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+            <button id="access-member-btn" class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-xl transition transform hover:scale-105">
+                Acessar Área de Membros
             </button>
         </div>
-        <div id="status-display" class="mt-4 text-center font-medium text-lg min-h-[3rem] transition-all duration-300"></div>
+        <div id="access-status-display" class="mt-4 text-center font-medium text-lg min-h-[3rem] transition-all duration-300"></div>
 
         <button id="admin-login-btn" class="mt-8 text-sm text-gray-500 hover:text-gray-700 transition-colors">
             Área de Administração
@@ -216,7 +216,7 @@
                         <input type="number" step="0.01" id="task-price" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
                     </div>
                     <div>
-                        <label for="task-member-id" class="block text-sm font-medium text-gray-700">ID do Membro (XXX-BOOSTMEMBERS)</label>
+                        <label for="task-member-id" class="block text-sm font-medium text-gray-700">ID do Membro</label>
                         <input type="text" id="task-member-id" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
                     </div>
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
@@ -374,9 +374,9 @@ const adminLoginModalEl = document.getElementById('admin-login-modal');
 const adminPasswordInput = document.getElementById('admin-password-input');
 const adminLoginErrorEl = document.getElementById('admin-login-error');
 
-const checkStatusBtn = document.getElementById('check-status-btn');
-const statusIdInput = document.getElementById('status-id-input');
-const statusDisplayEl = document.getElementById('status-display');
+const memberIdInput = document.getElementById('member-id-input');
+const accessMemberBtn = document.getElementById('access-member-btn');
+const accessStatusDisplay = document.getElementById('access-status-display');
 
 const influencerListEl = document.getElementById('influencer-list');
 const companyListEl = document.getElementById('company-list');
@@ -392,8 +392,8 @@ const paymentModalEl = document.getElementById('payment-modal');
 const paymentFormEl = document.getElementById('payment-form');
 
 const memberFormEl = document.getElementById('member-form');
-const memberIdInput = document.getElementById('member-id-input');
-const memberNameInput = document.getElementById('member-name-input');
+const memberIdInputAdmin = document.getElementById('member-id-input');
+const memberNameInputAdmin = document.getElementById('member-name-input');
 const membersListEl = document.getElementById('members-list');
 
 // --- Helper Functions ---
@@ -492,7 +492,7 @@ document.getElementById('admin-password-btn').addEventListener('click', () => {
 registrationFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'O sistema está se inicializando. Por favor, tente novamente em alguns segundos.', false);
+        showMessageModal('Aguarde', 'O sistema está se inicializando. Por favor, tente novamente em alguns segundos.');
         return;
     }
     const formType = formTypeInput.value;
@@ -517,29 +517,29 @@ registrationFormEl.addEventListener('submit', async (e) => {
     try {
         const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
         await setDoc(doc(registrationsRef, uniqueId), formData);
-        showMessageModal('Cadastro Enviado!', `Seu cadastro foi enviado com sucesso. Guarde este código para consultar o status: <br><br><strong>${uniqueId}</strong>`, true);
+        showMessageModal('Cadastro Enviado!', `Seu cadastro foi enviado com sucesso. O código para aprovação é: <br><br><strong>${uniqueId}</strong>`);
         clearAndHideFormModal();
     } catch (error) {
         console.error("Erro ao enviar o cadastro:", error);
-        showMessageModal('Erro!', 'Ocorreu um erro ao enviar seu cadastro. Por favor, tente novamente.', false);
+        showMessageModal('Erro!', 'Ocorreu um erro ao enviar seu cadastro. Por favor, tente novamente.');
     }
 });
 
 // Acesso à Área de Membros
-checkStatusBtn.addEventListener('click', async () => {
+accessMemberBtn.addEventListener('click', async () => {
     if (!auth.currentUser) {
-        statusDisplayEl.textContent = 'Aguarde a inicialização do sistema.';
+        accessStatusDisplay.textContent = 'Aguarde a inicialização do sistema.';
         return;
     }
-    const memberId = statusIdInput.value.trim().toUpperCase();
+    const memberId = memberIdInput.value.trim().toUpperCase();
     if (memberId.length < 1) {
-        statusDisplayEl.textContent = 'Por favor, digite um ID de membro.';
-        statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+        accessStatusDisplay.textContent = 'Por favor, digite um ID de membro.';
+        accessStatusDisplay.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
         return;
     }
     
-    statusDisplayEl.textContent = 'Acessando...';
-    statusDisplayEl.className = 'mt-4 text-center font-medium text-gray-500 text-lg min-h-[3rem] transition-all duration-300';
+    accessStatusDisplay.textContent = 'Acessando...';
+    accessStatusDisplay.className = 'mt-4 text-center font-medium text-gray-500 text-lg min-h-[3rem] transition-all duration-300';
 
     try {
         const memberRef = doc(db, `artifacts/${appId}/public/data/members`, memberId);
@@ -549,13 +549,13 @@ checkStatusBtn.addEventListener('click', async () => {
             const memberData = memberDoc.data();
             showMemberArea(memberId, memberData.name);
         } else {
-            statusDisplayEl.textContent = 'ID de membro não encontrado.';
-            statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+            accessStatusDisplay.textContent = 'ID de membro não encontrado.';
+            accessStatusDisplay.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
         }
     } catch (error) {
         console.error("Erro ao acessar a área de membros:", error);
-        statusDisplayEl.textContent = 'Ocorreu um erro ao consultar o status.';
-        statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+        accessStatusDisplay.textContent = 'Ocorreu um erro ao consultar o status.';
+        accessStatusDisplay.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
     }
 });
 
@@ -581,7 +581,7 @@ tabBtns.forEach(btn => {
 // Admin Panel Real-time Listeners
 function setupRealtimeListeners() {
     onSnapshot(collection(db, `artifacts/${appId}/public/data/registrations`), (snapshot) => {
-        const registrations = snapshot.docs.map(doc => ({ id: doc.id, docId: doc.id, ...doc.data() }));
+        const registrations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         const influencers = registrations.filter(reg => reg.type === 'influencer');
         const companies = registrations.filter(reg => reg.type === 'company');
         const employees = registrations.filter(reg => reg.type === 'employee');
@@ -592,7 +592,7 @@ function setupRealtimeListeners() {
     });
 
     onSnapshot(collection(db, `artifacts/${appId}/public/data/jobs`), (snapshot) => {
-        const jobs = snapshot.docs.map(doc => ({ id: doc.id, docId: doc.id, ...doc.data() }));
+        const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderJobs(jobs, jobsListEl);
         updateJobSelect(jobs);
     });
@@ -631,8 +631,8 @@ function renderRegistrations(list, container, type) {
                     <p class="text-sm text-gray-500">Status: <span class="font-semibold">${item.status}</span></p>
                 </div>
                 <div class="space-x-2">
-                    <button class="approve-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.docId}">Aprovar</button>
-                    <button class="disapprove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.docId}">Reprovar</button>
+                    <button class="approve-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}" data-type="${type}">Aprovar</button>
+                    <button class="disapprove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}" data-type="${type}">Reprovar</button>
                 </div>
             </div>
             <div class="mt-2 text-sm text-gray-600">
@@ -662,7 +662,7 @@ function renderRegistrations(list, container, type) {
 
 async function updateRegistrationStatus(docId, status) {
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.');
         return;
     }
     try {
@@ -677,7 +677,7 @@ async function updateRegistrationStatus(docId, status) {
 jobFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema. Por favor, tente novamente em alguns segundos.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema. Por favor, tente novamente em alguns segundos.');
         return;
     }
     const jobData = {
@@ -689,11 +689,11 @@ jobFormEl.addEventListener('submit', async (e) => {
     try {
         const jobsRef = collection(db, `artifacts/${appId}/public/data/jobs`);
         await addDoc(jobsRef, jobData);
-        showMessageModal('Sucesso!', 'Vaga lançada com sucesso!', true);
+        showMessageModal('Sucesso!', 'Vaga lançada com sucesso!');
         jobFormEl.reset();
     } catch (error) {
         console.error("Erro ao lançar vaga:", error);
-        showMessageModal('Erro!', 'Ocorreu um erro ao lançar a vaga.', false);
+        showMessageModal('Erro!', 'Ocorreu um erro ao lançar a vaga.');
     }
 });
 
@@ -739,7 +739,7 @@ function updateJobSelect(jobs) {
 taskFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema. Por favor, tente novamente em alguns segundos.');
         return;
     }
     const taskData = {
@@ -754,11 +754,11 @@ taskFormEl.addEventListener('submit', async (e) => {
     try {
         const tasksRef = collection(db, `artifacts/${appId}/public/data/tasks`);
         await addDoc(tasksRef, taskData);
-        showMessageModal('Sucesso!', 'Tarefa atribuída com sucesso!', true);
+        showMessageModal('Sucesso!', 'Tarefa atribuída com sucesso!');
         taskFormEl.reset();
     } catch (error) {
         console.error("Erro ao atribuir tarefa:", error);
-        showMessageModal('Erro!', 'Ocorreu um erro ao atribuir a tarefa. Verifique se o ID do membro está correto.', false);
+        showMessageModal('Erro!', 'Ocorreu um erro ao atribuir a tarefa. Verifique se o ID do membro está correto.');
     }
 });
 
@@ -799,7 +799,7 @@ function renderAdminTasks(tasks, container) {
 
 async function updateTaskStatus(taskId, status) {
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.');
         return;
     }
     try {
@@ -837,13 +837,13 @@ function renderAdminPayments(payments, container) {
 
 async function updatePaymentStatus(paymentId, status) {
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.');
         return;
     }
     try {
         const paymentRef = doc(db, `artifacts/${appId}/public/data/payments`, paymentId);
         await updateDoc(paymentRef, { status });
-        showMessageModal('Sucesso!', 'Status de pagamento atualizado.', true);
+        showMessageModal('Sucesso!', 'Status de pagamento atualizado.');
     } catch (error) {
         console.error("Erro ao atualizar status do pagamento:", error);
     }
@@ -853,23 +853,23 @@ async function updatePaymentStatus(paymentId, status) {
 memberFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.');
         return;
     }
     const memberId = memberIdInput.value.trim().toUpperCase();
     const memberName = memberNameInput.value.trim();
     if (!memberId || !memberName) {
-        showMessageModal('Erro', 'Por favor, preencha todos os campos.', false);
+        showMessageModal('Erro', 'Por favor, preencha todos os campos.');
         return;
     }
     try {
         const memberRef = doc(db, `artifacts/${appId}/public/data/members`, memberId);
         await setDoc(memberRef, { id: memberId, name: memberName });
-        showMessageModal('Sucesso!', 'Membro criado com sucesso! Compartilhe o ID com ele.', true);
+        showMessageModal('Sucesso!', 'Membro criado com sucesso! Compartilhe o ID com ele.');
         memberFormEl.reset();
     } catch (error) {
         console.error("Erro ao criar membro:", error);
-        showMessageModal('Erro!', 'Ocorreu um erro ao criar o membro.', false);
+        showMessageModal('Erro!', 'Ocorreu um erro ao criar o membro.');
     }
 });
 
@@ -893,8 +893,8 @@ function renderMembers(members, container) {
 
 // Member Area Logic
 function setupMemberAreaListener(memberId) {
-    const tasksQuery = query(collection(db, `artifacts/${appId}/public/data/tasks`));
-    onSnapshot(tasksQuery, (snapshot) => {
+    const tasksRef = collection(db, `artifacts/${appId}/public/data/tasks`);
+    onSnapshot(tasksRef, (snapshot) => {
         const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         const memberTasks = tasks.filter(task => task.memberId === memberId);
         renderMemberTasks(memberTasks, memberTasksListEl);
@@ -948,7 +948,7 @@ paymentFormEl.addEventListener('submit', async (e) => {
     const taskId = document.getElementById('task-id-to-pay').value;
 
     if (!auth.currentUser) {
-        showMessageModal('Aguarde', 'O sistema está se inicializando. Por favor, tente novamente em alguns segundos.', false);
+        showMessageModal('Aguarde', 'O sistema está se inicializando. Por favor, tente novamente em alguns segundos.');
         return;
     }
 
@@ -977,7 +977,7 @@ paymentFormEl.addEventListener('submit', async (e) => {
         paymentModalEl.classList.add('hidden');
     } catch (error) {
         console.error("Erro ao solicitar pagamento:", error);
-        showMessageModal('Erro!', 'Ocorreu um erro ao enviar sua solicitação de pagamento.', false);
+        showMessageModal('Erro!', 'Ocorreu um erro ao enviar sua solicitação de pagamento.');
     }
 });
 
