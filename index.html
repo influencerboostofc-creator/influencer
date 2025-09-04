@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFLUENCER BOOST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div id="main-app" class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8 transition-all duration-500 overflow-hidden">
+    <!-- Landing Page -->
+    <div id="landing-page" class="text-center transition-all duration-500">
+        <div class="flex items-center justify-center mb-6">
+            <!-- Logo adicionada -->
+            <img src="Gemini_Generated_Image_ifwkm0ifwkm0ifwk.jpg" alt="Logo da INFLUENCER BOOST" class="w-20 h-20 rounded-full object-cover">
+            <h1 class="text-4xl font-bold text-gray-800 ml-4">INFLUENCER BOOST</h1>
+        </div>
+
+        <p class="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Na INFLUENCER BOOST, somos a ponte que conecta o talento dos criadores de conteúdo com o potencial das marcas. Unimos empresas a influenciadores para criar parcerias autênticas e campanhas impactantes que geram resultados reais.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105" data-form-type="influencer">
+                Cadastrar como Influencer
+            </button>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105" data-form-type="company">
+                Cadastrar como Empresa
+            </button>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105" data-form-type="employee">
+                Cadastrar como Funcionário
+            </button>
+        </div>
+
+        <div class="flex items-center justify-center space-x-4">
+            <input type="text" id="status-id-input" placeholder="Digite seu código de cadastro" class="w-full max-w-md p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+            <button id="check-status-btn" class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-xl transition transform hover:scale-105">
+                Consultar Status
+            </button>
+        </div>
+        <div id="status-display" class="mt-4 text-center font-medium text-lg min-h-[3rem] transition-all duration-300"></div>
+
+        <button id="admin-login-btn" class="mt-8 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+            Área de Administração
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <!-- Form Modal -->
+    <div id="form-modal" class="modal-overlay hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg mx-4 relative">
+            <button id="form-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors">&times;</button>
+            <h2 id="form-title" class="text-2xl font-bold mb-6 text-gray-800"></h2>
+            <form id="registration-form" class="space-y-4">
+                <input type="hidden" id="form-type-input">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nome</label>
+                    <input type="text" id="name" name="name" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="surname" class="block text-sm font-medium text-gray-700">Sobrenome</label>
+                    <input type="text" id="surname" name="surname" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Telefone</label>
+                    <input type="tel" id="phone" name="phone" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="cpf" class="block text-sm font-medium text-gray-700">CPF</label>
+                    <input type="text" id="cpf" name="cpf" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div id="instagram-field-group">
+                    <label for="instagram" class="block text-sm font-medium text-gray-700">@ do Instagram</label>
+                    <input type="text" id="instagram" name="instagram" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div id="employee-jobs-field" class="hidden">
+                    <label for="jobs-select" class="block text-sm font-medium text-gray-700">Vaga de Interesse</label>
+                    <select id="jobs-select" name="jobId" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div id="no-jobs-message" class="hidden mt-4 p-4 text-center text-gray-500 bg-gray-100 rounded-md">Não há vagas disponíveis no momento.</div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Enviar Cadastro
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="modal-overlay hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 relative text-center">
+            <button id="admin-login-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors">&times;</button>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Login da Área de Administração</h2>
+            <p class="text-sm text-red-500 mb-6">Atenção: A senha está codificada no código. Não é seguro para uso profissional.</p>
+            <input type="password" id="admin-password-input" placeholder="Digite a senha" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-center">
+            <button id="admin-password-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                Entrar
+            </button>
+            <p id="admin-login-error" class="text-red-500 mt-2 hidden"></p>
+        </div>
+    </div>
+    
+    <!-- Custom Message Modal -->
+    <div id="message-modal" class="modal-overlay hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4 text-center relative">
+            <button id="message-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors">&times;</button>
+            <h2 id="message-title" class="text-2xl font-bold mb-4 text-gray-800"></h2>
+            <p id="message-body" class="text-gray-600 mb-6 leading-relaxed"></p>
+            <button id="message-ok-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="hidden transition-all duration-500">
+        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Painel de Administração</h2>
+        <div class="flex items-center justify-between mb-6">
+            <span class="text-sm font-semibold text-gray-500">ID do Usuário: <span id="user-id-display" class="font-normal text-gray-700 break-all"></span></span>
+            <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">Sair</button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex justify-center border-b border-gray-200 mb-6">
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="influencers">Influencers</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="companies">Empresas</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="employees">Funcionários</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="jobs">Gerenciar Vagas</button>
+        </div>
+
+        <!-- Tabs Content -->
+        <div id="tab-content">
+            <!-- Influencers Tab -->
+            <div id="tab-influencers" class="tab-pane">
+                <h3 class="text-xl font-bold mb-4">Cadastros de Influencers</h3>
+                <div id="influencer-list" class="space-y-4"></div>
+            </div>
+
+            <!-- Companies Tab -->
+            <div id="tab-companies" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Cadastros de Empresas</h3>
+                <div id="company-list" class="space-y-4"></div>
+            </div>
+
+            <!-- Employees Tab -->
+            <div id="tab-employees" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Cadastros de Funcionários</h3>
+                <div id="employee-list" class="space-y-4"></div>
+            </div>
+
+            <!-- Jobs Tab -->
+            <div id="tab-jobs" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Gerenciar Vagas de Funcionários</h3>
+                <form id="job-form" class="bg-gray-50 p-6 rounded-xl shadow-inner mb-6 space-y-4">
+                    <div>
+                        <label for="job-title" class="block text-sm font-medium text-gray-700">Título da Vaga</label>
+                        <input type="text" id="job-title" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="job-salary" class="block text-sm font-medium text-gray-700">Salário</label>
+                        <input type="text" id="job-salary" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="job-requirements" class="block text-sm font-medium text-gray-700">Requisitos (separados por vírgula)</label>
+                        <input type="text" id="job-requirements" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                        Lançar Vaga
+                    </button>
+                </form>
+                <div id="jobs-list" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// Set Firestore log level to debug
+setLogLevel('debug');
+
+// Global variables for Firebase configuration
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = {
+    apiKey: "AIzaSyCgQBj9ukZylx9lXSj5fGHehJWpOwst-Z8",
+    authDomain: "influencer-4f0a5.firebaseapp.com",
+    projectId: "influencer-4f0a5",
+    storageBucket: "influencer-4f0a5.firebasestorage.app",
+    messagingSenderId: "859588705931",
+    appId: "1:859588705931:web:4075ad5870e5774dd61e8e",
+    measurementId: "G-ZSL1N4EVT2"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let userId = null;
+let isAuthReady = false;
+
+// Authenticate the user and set up listeners after auth is ready
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        userId = user.uid;
+        document.getElementById('user-id-display').textContent = userId;
+    } else {
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        try {
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (error) {
+            console.error("Firebase auth error:", error);
+        }
+    }
+    isAuthReady = true;
+    setupRealtimeListeners();
+});
+
+// --- DOM Elements ---
+const landingPageEl = document.getElementById('landing-page');
+const adminPanelEl = document.getElementById('admin-panel');
+
+const formModalEl = document.getElementById('form-modal');
+const formTitleEl = document.getElementById('form-title');
+const registrationFormEl = document.getElementById('registration-form');
+const formTypeInput = document.getElementById('form-type-input');
+const instagramFieldGroup = document.getElementById('instagram-field-group');
+const employeeJobsField = document.getElementById('employee-jobs-field');
+const jobsSelectEl = document.getElementById('jobs-select');
+const noJobsMessageEl = document.getElementById('no-jobs-message');
+
+const messageModalEl = document.getElementById('message-modal');
+const messageTitleEl = document.getElementById('message-title');
+const messageBodyEl = document.getElementById('message-body');
+
+const adminLoginModalEl = document.getElementById('admin-login-modal');
+const adminPasswordInput = document.getElementById('admin-password-input');
+const adminLoginErrorEl = document.getElementById('admin-login-error');
+
+const checkStatusBtn = document.getElementById('check-status-btn');
+const statusIdInput = document.getElementById('status-id-input');
+const statusDisplayEl = document.getElementById('status-display');
+
+const influencerListEl = document.getElementById('influencer-list');
+const companyListEl = document.getElementById('company-list');
+const employeeListEl = document.getElementById('employee-list');
+const jobsListEl = document.getElementById('jobs-list');
+const jobFormEl = document.getElementById('job-form');
+
+// --- Helper Functions ---
+function showMessageModal(title, body, isSuccess = true) {
+    messageTitleEl.textContent = title;
+    messageBodyEl.textContent = body;
+    messageModalEl.classList.remove('hidden');
+}
+
+function hideMessageModal() {
+    messageModalEl.classList.add('hidden');
+}
+
+function showAdminPanel() {
+    landingPageEl.classList.add('hidden');
+    adminLoginModalEl.classList.add('hidden');
+    adminPanelEl.classList.remove('hidden');
+    adminLoginErrorEl.classList.add('hidden');
+    setActiveTab('influencers'); // Default to influencers tab
+}
+
+function showLandingPage() {
+    landingPageEl.classList.remove('hidden');
+    adminPanelEl.classList.add('hidden');
+}
+
+function clearAndHideFormModal() {
+    registrationFormEl.reset();
+    formModalEl.classList.add('hidden');
+    document.getElementById('instagram').required = true;
+    instagramFieldGroup.classList.remove('hidden');
+    employeeJobsField.classList.add('hidden');
+    noJobsMessageEl.classList.add('hidden');
+}
+
+// --- Event Listeners ---
+document.querySelectorAll('[data-form-type]').forEach(button => {
+    button.addEventListener('click', (e) => {
+        const formType = e.target.getAttribute('data-form-type');
+        formTypeInput.value = formType;
+        formTitleEl.textContent = `Cadastro de ${formType.charAt(0).toUpperCase() + formType.slice(1)}`;
+        if (formType === 'employee') {
+            instagramFieldGroup.classList.add('hidden');
+            document.getElementById('instagram').required = false;
+            employeeJobsField.classList.remove('hidden');
+        } else {
+            instagramFieldGroup.classList.remove('hidden');
+            document.getElementById('instagram').required = true;
+            employeeJobsField.classList.add('hidden');
+        }
+        formModalEl.classList.remove('hidden');
+    });
+});
+
+document.getElementById('form-modal-close').addEventListener('click', clearAndHideFormModal);
+document.getElementById('message-modal-close').addEventListener('click', hideMessageModal);
+document.getElementById('message-ok-btn').addEventListener('click', hideMessageModal);
+document.getElementById('admin-login-close').addEventListener('click', () => {
+    adminLoginModalEl.classList.add('hidden');
+    adminPasswordInput.value = '';
+    adminLoginErrorEl.classList.add('hidden');
+});
+document.getElementById('admin-login-btn').addEventListener('click', () => {
+    landingPageEl.classList.add('hidden');
+    adminLoginModalEl.classList.remove('hidden');
+});
+document.getElementById('logout-btn').addEventListener('click', showLandingPage);
+
+document.getElementById('admin-password-btn').addEventListener('click', () => {
+    const password = adminPasswordInput.value;
+    // NOTE: Hardcoded password for this example. Not secure for production.
+    if (password === '8078') {
+        showAdminPanel();
+    } else {
+        adminLoginErrorEl.textContent = 'Senha incorreta.';
+        adminLoginErrorEl.classList.remove('hidden');
+    }
+});
+
+registrationFormEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!isAuthReady) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema...', false);
+        return;
+    }
+    const formType = formTypeInput.value;
+    const uniqueId = crypto.randomUUID().slice(0, 8).toUpperCase();
+
+    const formData = {
+        name: e.target.name.value,
+        surname: e.target.surname.value,
+        phone: e.target.phone.value,
+        cpf: e.target.cpf.value,
+        type: formType,
+        status: 'Pendente',
+        id: uniqueId,
+        timestamp: new Date()
+    };
+    if (formType === 'influencer' || formType === 'company') {
+        formData.instagram = e.target.instagram.value;
+    } else if (formType === 'employee') {
+        formData.jobId = e.target.jobId.value;
+    }
+
+    try {
+        const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
+        await addDoc(registrationsRef, formData);
+        showMessageModal('Cadastro Enviado!', `Seu cadastro foi enviado com sucesso. Guarde este código para consultar o status: <br><br><strong>${uniqueId}</strong>`, true);
+        clearAndHideFormModal();
+    } catch (error) {
+        console.error("Erro ao enviar o cadastro:", error);
+        showMessageModal('Erro!', 'Ocorreu um erro ao enviar seu cadastro. Por favor, tente novamente.', false);
+    }
+});
+
+checkStatusBtn.addEventListener('click', async () => {
+    if (!isAuthReady) {
+        statusDisplayEl.textContent = 'Aguarde...';
+        return;
+    }
+    const uniqueId = statusIdInput.value.trim().toUpperCase();
+    if (uniqueId.length < 8) {
+        statusDisplayEl.textContent = 'Código inválido.';
+        statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+        return;
+    }
+
+    statusDisplayEl.textContent = 'Buscando...';
+    statusDisplayEl.className = 'mt-4 text-center font-medium text-gray-500 text-lg min-h-[3rem] transition-all duration-300';
+
+    try {
+        const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
+        const querySnapshot = await getDocs(registrationsRef);
+        let found = false;
+        let registrationStatus = 'Não encontrado';
+        querySnapshot.forEach(doc => {
+            if (doc.data().id === uniqueId) {
+                registrationStatus = doc.data().status;
+                found = true;
+            }
+        });
+
+        if (found) {
+            let statusColor = '';
+            if (registrationStatus === 'Pendente') statusColor = 'text-yellow-500';
+            else if (registrationStatus === 'Aprovado') statusColor = 'text-green-500';
+            else if (registrationStatus === 'Reprovado') statusColor = 'text-red-500';
+            statusDisplayEl.textContent = `Status: ${registrationStatus}`;
+            statusDisplayEl.className = `mt-4 text-center font-medium ${statusColor} text-lg min-h-[3rem] transition-all duration-300`;
+        } else {
+            statusDisplayEl.textContent = 'Cadastro não encontrado.';
+            statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+        }
+    } catch (error) {
+        console.error("Erro ao consultar status:", error);
+        statusDisplayEl.textContent = 'Ocorreu um erro ao consultar o status.';
+        statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
+    }
+});
+
+// Admin Panel Logic
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanes = document.querySelectorAll('.tab-pane');
+
+function setActiveTab(tabName) {
+    tabBtns.forEach(btn => {
+        btn.setAttribute('data-active', btn.getAttribute('data-tab') === tabName);
+    });
+    tabPanes.forEach(pane => {
+        pane.classList.toggle('hidden', pane.id !== `tab-${tabName}`);
+    });
+}
+
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        setActiveTab(e.target.getAttribute('data-tab'));
+    });
+});
+
+// Admin Panel Real-time Listeners
+function setupRealtimeListeners() {
+    onSnapshot(collection(db, `artifacts/${appId}/public/data/registrations`), (snapshot) => {
+        const registrations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const influencers = registrations.filter(reg => reg.type === 'influencer');
+        const companies = registrations.filter(reg => reg.type === 'company');
+        const employees = registrations.filter(reg => reg.type === 'employee');
+
+        renderRegistrations(influencers, influencerListEl, 'influencer');
+        renderRegistrations(companies, companyListEl, 'company');
+        renderRegistrations(employees, employeeListEl, 'employee');
+    });
+
+    onSnapshot(collection(db, `artifacts/${appId}/public/data/jobs`), (snapshot) => {
+        const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderJobs(jobs, jobsListEl);
+        updateJobSelect(jobs);
+    });
+}
+
+function renderRegistrations(list, container, type) {
+    container.innerHTML = '';
+    if (list.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhum cadastro de ${type} encontrado.</p>`;
+        return;
+    }
+    list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl shadow-md border ${item.status === 'Aprovado' ? 'bg-green-50 border-green-200' : item.status === 'Reprovado' ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'}`;
+        
+        let details = `
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-bold text-lg">${item.name} ${item.surname}</p>
+                    <p class="text-sm text-gray-500">Código: ${item.id}</p>
+                    <p class="text-sm text-gray-500">Status: <span class="font-semibold">${item.status}</span></p>
+                </div>
+                <div class="space-x-2">
+                    <button class="approve-btn bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}">Aprovar</button>
+                    <button class="disapprove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-lg text-sm" data-doc-id="${item.id}">Reprovar</button>
+                </div>
+            </div>
+            <div class="mt-2 text-sm text-gray-600">
+                <p><strong>Telefone:</strong> ${item.phone}</p>
+                <p><strong>CPF:</strong> ${item.cpf}</p>
+        `;
+        
+        if (item.instagram) {
+            details += `<p><strong>@ Instagram:</strong> ${item.instagram}</p>`;
+        }
+        if (item.jobId) {
+            details += `<p><strong>Vaga de Interesse:</strong> ${item.jobId}</p>`;
+        }
+        details += `</div>`;
+        card.innerHTML = details;
+        container.appendChild(card);
+    });
+
+    // Add event listeners for approve/disapprove buttons
+    container.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', () => updateRegistrationStatus(btn.dataset.docId, 'Aprovado'));
+    });
+    container.querySelectorAll('.disapprove-btn').forEach(btn => {
+        btn.addEventListener('click', () => updateRegistrationStatus(btn.dataset.docId, 'Reprovado'));
+    });
+}
+
+async function updateRegistrationStatus(registrationId, status) {
+    if (!isAuthReady) {
+        console.error("Autenticação não concluída. Tente novamente.");
+        return;
+    }
+    try {
+        const registrationsRef = collection(db, `artifacts/${appId}/public/data/registrations`);
+        const q = query(registrationsRef);
+        const snapshot = await getDocs(q);
+        let docIdToUpdate = null;
+        snapshot.forEach(doc => {
+            if (doc.data().id === registrationId) {
+                docIdToUpdate = doc.id;
+            }
+        });
+        if (docIdToUpdate) {
+            const docRef = doc(db, `artifacts/${appId}/public/data/registrations`, docIdToUpdate);
+            await updateDoc(docRef, { status });
+        } else {
+            console.error("Documento não encontrado para o ID:", registrationId);
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar status:", error);
+    }
+}
+
+// Job Management Logic
+jobFormEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!isAuthReady) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema...', false);
+        return;
+    }
+    const jobData = {
+        title: document.getElementById('job-title').value,
+        salary: document.getElementById('job-salary').value,
+        requirements: document.getElementById('job-requirements').value.split(',').map(s => s.trim()),
+        timestamp: new Date()
+    };
+    try {
+        const jobsRef = collection(db, `artifacts/${appId}/public/data/jobs`);
+        await addDoc(jobsRef, jobData);
+        showMessageModal('Sucesso!', 'Vaga lançada com sucesso!', true);
+        jobFormEl.reset();
+    } catch (error) {
+        console.error("Erro ao lançar vaga:", error);
+        showMessageModal('Erro!', 'Ocorreu um erro ao lançar a vaga.', false);
+    }
+});
+
+function renderJobs(jobs, container) {
+    container.innerHTML = '';
+    if (jobs.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhuma vaga lançada.</p>`;
+        return;
+    }
+    jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-xl shadow-sm border border-gray-200 bg-white relative";
+        card.innerHTML = `
+            <h4 class="font-bold text-lg">${job.title}</h4>
+            <p class="text-sm text-gray-600">Salário: ${job.salary}</p>
+            <p class="text-sm text-gray-600 mt-2 font-semibold">Requisitos:</p>
+            <ul class="list-disc list-inside text-sm text-gray-500">
+                ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+            </ul>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function updateJobSelect(jobs) {
+    jobsSelectEl.innerHTML = '';
+    if (jobs.length > 0) {
+        jobs.forEach(job => {
+            const option = document.createElement('option');
+            option.value = job.id;
+            option.textContent = job.title;
+            jobsSelectEl.appendChild(option);
+        });
+        employeeJobsField.classList.remove('hidden');
+        noJobsMessageEl.classList.add('hidden');
+    } else {
+        employeeJobsField.classList.add('hidden');
+        noJobsMessageEl.classList.remove('hidden');
+    }
+}
+</script>
+
+</body>
+</html>
