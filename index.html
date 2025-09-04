@@ -154,6 +154,7 @@
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="jobs">Gerenciar Vagas</button>
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="tasks">Gerenciar Tarefas</button>
             <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="payments">Pagamentos</button>
+            <button class="tab-btn px-4 py-2 font-medium text-sm text-gray-500 border-b-2 border-transparent transition-colors duration-200 hover:text-blue-600 hover:border-blue-600 data-[active=true]:text-blue-600 data-[active=true]:border-blue-600" data-tab="members">Gerenciar Membros</button>
         </div>
 
         <!-- Tabs Content -->
@@ -229,6 +230,25 @@
                 <h3 class="text-xl font-bold mb-4">Solicitações de Pagamento</h3>
                 <div id="payments-list" class="space-y-4"></div>
             </div>
+
+            <!-- Members Tab -->
+            <div id="tab-members" class="tab-pane hidden">
+                <h3 class="text-xl font-bold mb-4">Gerenciar Membros</h3>
+                <form id="member-form" class="bg-gray-50 p-6 rounded-xl shadow-inner mb-6 space-y-4">
+                    <div>
+                        <label for="member-id-input" class="block text-sm font-medium text-gray-700">ID do Membro</label>
+                        <input type="text" id="member-id-input" required placeholder="Ex: 123-BOOSTMEMBERS" class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="member-name-input" class="block text-sm font-medium text-gray-700">Nome do Membro</label>
+                        <input type="text" id="member-name-input" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                        Criar Membro
+                    </button>
+                </form>
+                <div id="members-list" class="space-y-4"></div>
+            </div>
         </div>
     </div>
     
@@ -278,7 +298,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs, where, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // Set Firestore log level to debug
@@ -319,6 +339,12 @@ onAuthStateChanged(auth, async (user) => {
             }
         } catch (error) {
             console.error("Firebase auth error:", error);
+            // Fallback to anonymous sign-in if custom token fails
+            try {
+                await signInAnonymously(auth);
+            } catch (anonError) {
+                console.error("Firebase anonymous sign-in failed:", anonError);
+            }
         }
     }
     isAuthReady = true;
@@ -365,8 +391,13 @@ const memberTasksListEl = document.getElementById('member-tasks-list');
 const paymentModalEl = document.getElementById('payment-modal');
 const paymentFormEl = document.getElementById('payment-form');
 
+const memberFormEl = document.getElementById('member-form');
+const memberIdInput = document.getElementById('member-id-input');
+const memberNameInput = document.getElementById('member-name-input');
+const membersListEl = document.getElementById('members-list');
+
 // --- Helper Functions ---
-function showMessageModal(title, body, isSuccess = true) {
+function showMessageModal(title, body) {
     messageTitleEl.textContent = title;
     messageBodyEl.innerHTML = body;
     messageModalEl.classList.remove('hidden');
@@ -391,11 +422,12 @@ function showLandingPage() {
     memberAreaEl.classList.add('hidden');
 }
 
-function showMemberArea(username) {
+function showMemberArea(memberId, username) {
     landingPageEl.classList.add('hidden');
     adminPanelEl.classList.add('hidden');
     memberAreaEl.classList.remove('hidden');
     memberUsernameEl.textContent = username;
+    setupMemberAreaListener(memberId);
 }
 
 function clearAndHideFormModal() {
@@ -493,72 +525,35 @@ registrationFormEl.addEventListener('submit', async (e) => {
     }
 });
 
+// Acesso à Área de Membros
 checkStatusBtn.addEventListener('click', async () => {
     if (!auth.currentUser) {
         statusDisplayEl.textContent = 'Aguarde a inicialização do sistema.';
         return;
     }
-    const uniqueId = statusIdInput.value.trim().toUpperCase();
-    if (uniqueId.length < 8) {
-        statusDisplayEl.textContent = 'Código inválido.';
+    const memberId = statusIdInput.value.trim().toUpperCase();
+    if (memberId.length < 1) {
+        statusDisplayEl.textContent = 'Por favor, digite um ID de membro.';
         statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
         return;
     }
-
-    statusDisplayEl.textContent = 'Buscando...';
+    
+    statusDisplayEl.textContent = 'Acessando...';
     statusDisplayEl.className = 'mt-4 text-center font-medium text-gray-500 text-lg min-h-[3rem] transition-all duration-300';
 
     try {
-        const registrationRef = doc(db, `artifacts/${appId}/public/data/registrations`, uniqueId);
-        const docSnap = await getDoc(registrationRef);
+        const memberRef = doc(db, `artifacts/${appId}/public/data/members`, memberId);
+        const memberDoc = await getDoc(memberRef);
         
-        if (!docSnap.exists()) {
-            statusDisplayEl.textContent = 'Cadastro não encontrado.';
+        if (memberDoc.exists()) {
+            const memberData = memberDoc.data();
+            showMemberArea(memberId, memberData.name);
+        } else {
+            statusDisplayEl.textContent = 'ID de membro não encontrado.';
             statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
-            return;
-        }
-
-        const registrationData = docSnap.data();
-        let statusColor = '';
-
-        if (registrationData.status === 'Pendente') {
-            statusColor = 'text-yellow-500';
-            statusDisplayEl.innerHTML = `Status: ${registrationData.status}`;
-            statusDisplayEl.className = `mt-4 text-center font-medium ${statusColor} text-lg min-h-[3rem] transition-all duration-300`;
-        } else if (registrationData.status === 'Aprovado') {
-            statusColor = 'text-green-500';
-            const memberRef = doc(db, `artifacts/${appId}/public/data/members`, registrationData.id);
-            const memberDoc = await getDoc(memberRef);
-            let memberUsername = '';
-
-            if (!memberDoc.exists()) {
-                const randomNumbers = Math.floor(100 + Math.random() * 900);
-                memberUsername = `${randomNumbers}-BOOSTMEMBERS`;
-                await setDoc(memberRef, {
-                    registrationId: registrationData.id,
-                    username: memberUsername
-                });
-            } else {
-                memberUsername = memberDoc.data().username;
-            }
-
-            showMessageModal(
-                'Cadastro Aprovado!',
-                `Parabéns, seu cadastro foi aprovado! <br><br>Seu usuário da área de membros é: <strong>${memberUsername}</strong><br><br>Você pode acessar a área de membros clicando no botão abaixo.`
-            );
-            statusDisplayEl.innerHTML = `Status: Aprovado <br><button id="acessar-area-membro" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">Acessar Área de Membros</button>`;
-            document.getElementById('acessar-area-membro').addEventListener('click', () => {
-                showMemberArea(memberUsername);
-                setupMemberAreaListener(registrationData.id);
-            });
-
-        } else if (registrationData.status === 'Reprovado') {
-            statusColor = 'text-red-500';
-            statusDisplayEl.innerHTML = `Status: ${registrationData.status}`;
-            statusDisplayEl.className = `mt-4 text-center font-medium ${statusColor} text-lg min-h-[3rem] transition-all duration-300`;
         }
     } catch (error) {
-        console.error("Erro ao consultar status:", error);
+        console.error("Erro ao acessar a área de membros:", error);
         statusDisplayEl.textContent = 'Ocorreu um erro ao consultar o status.';
         statusDisplayEl.className = 'mt-4 text-center font-medium text-red-500 text-lg min-h-[3rem] transition-all duration-300';
     }
@@ -610,6 +605,11 @@ function setupRealtimeListeners() {
     onSnapshot(collection(db, `artifacts/${appId}/public/data/payments`), (snapshot) => {
         const payments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderAdminPayments(payments, paymentsListEl);
+    });
+    
+    onSnapshot(collection(db, `artifacts/${appId}/public/data/members`), (snapshot) => {
+        const members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderMembers(members, membersListEl);
     });
 }
 
@@ -849,12 +849,54 @@ async function updatePaymentStatus(paymentId, status) {
     }
 }
 
+// Member Management Logic (Admin)
+memberFormEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!auth.currentUser) {
+        showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.', false);
+        return;
+    }
+    const memberId = memberIdInput.value.trim().toUpperCase();
+    const memberName = memberNameInput.value.trim();
+    if (!memberId || !memberName) {
+        showMessageModal('Erro', 'Por favor, preencha todos os campos.', false);
+        return;
+    }
+    try {
+        const memberRef = doc(db, `artifacts/${appId}/public/data/members`, memberId);
+        await setDoc(memberRef, { id: memberId, name: memberName });
+        showMessageModal('Sucesso!', 'Membro criado com sucesso! Compartilhe o ID com ele.', true);
+        memberFormEl.reset();
+    } catch (error) {
+        console.error("Erro ao criar membro:", error);
+        showMessageModal('Erro!', 'Ocorreu um erro ao criar o membro.', false);
+    }
+});
+
+function renderMembers(members, container) {
+    container.innerHTML = '';
+    if (members.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500">Nenhum membro cadastrado.</p>`;
+        return;
+    }
+    members.forEach(member => {
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl shadow-sm border border-gray-200 bg-white relative`;
+        card.innerHTML = `
+            <h4 class="font-bold text-lg">${member.name}</h4>
+            <p class="text-sm text-gray-600">ID: <strong>${member.id}</strong></p>
+        `;
+        container.appendChild(card);
+    });
+}
+
+
 // Member Area Logic
-function setupMemberAreaListener(registrationId) {
+function setupMemberAreaListener(memberId) {
     const tasksQuery = query(collection(db, `artifacts/${appId}/public/data/tasks`));
     onSnapshot(tasksQuery, (snapshot) => {
         const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const memberTasks = tasks.filter(task => task.memberId === registrationId);
+        const memberTasks = tasks.filter(task => task.memberId === memberId);
         renderMemberTasks(memberTasks, memberTasksListEl);
     });
 }
