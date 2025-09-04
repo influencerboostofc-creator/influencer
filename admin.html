@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área Administrativa - Influencer Boost</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .nav-pills .nav-link.active {
+            background-color: #343a40;
+        }
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse" style="min-height: 100vh;">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">INFLUENCER BOOST</h4>
+                        <p class="text-white-50">Área Administrativa</p>
+                    </div>
+                    <ul class="nav flex-column nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="#cadastros" data-bs-toggle="tab">
+                                <i class="bi bi-person-plus me-2"></i>Cadastros Pendentes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#vagas" data-bs-toggle="tab">
+                                <i class="bi bi-briefcase me-2"></i>Vagas de Emprego
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#tarefas" data-bs-toggle="tab">
+                                <i class="bi bi-list-task me-2"></i>Tarefas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#entregas" data-bs-toggle="tab">
+                                <i class="bi bi-check-circle me-2"></i>Entregas
+                            </a>
+                        </li>
+                    </ul>
+                    <hr class="text-white-50">
+                    <div class="d-grid gap-2 px-3">
+                        <a href="index.html" class="btn btn-outline-light">
+                            <i class="bi bi-box-arrow-left me-2"></i>Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conteúdo principal -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="tab-content" id="myTabContent">
+                    <!-- Cadastros Pendentes -->
+                    <div class="tab-pane fade show active" id="cadastros">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h2>Cadastros Pendentes</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Tipo</th>
+                                        <th>Nome</th>
+                                        <th>Instagram</th>
+                                        <th>Data</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cadastrosTableBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Vagas de Emprego -->
+                    <div class="tab-pane fade" id="vagas">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h2>Vagas de Emprego</h2>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novaVagaModal">
+                                <i class="bi bi-plus-circle me-2"></i>Nova Vaga
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Título</th>
+                                        <th>Salário</th>
+                                        <th>Status</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vagasTableBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tarefas -->
+                    <div class="tab-pane fade" id="tarefas">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h2>Tarefas</h2>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novaTarefaModal">
+                                <i class="bi bi-plus-circle me-2"></i>Nova Tarefa
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Título</th>
+                                        <th>Tipo de Usuário</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Entregas</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tarefasTableBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Entregas -->
+                    <div class="tab-pane fade" id="entregas">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h2>Entregas Pendentes</h2>
+                        </div>
+                        <div id="entregasPendentes">
+                            <!-- Dados serão carregados via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Aprovação/Reprovação de Cadastro -->
+    <div class="modal fade" id="avaliarCadastroModal" tabindex="-1" aria-labelledby="avaliarCadastroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="avaliarCadastroModalLabel">Avaliar Cadastro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dadosCadastroAvaliacao">
+                        <!-- Dados do cadastro serão exibidos aqui -->
+                    </div>
+                    <form id="avaliarCadastroForm">
+                        <input type="hidden" id="codigoCadastroAvaliacao">
+                        <div class="mb-3">
+                            <label class="form-label">Status:</label>
+                            <select class="form-select" id="statusCadastroAvaliacao">
+                                <option value="aprovado">Aprovar</option>
+                                <option value="reprovado">Reprovar</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="motivoReprovacaoDiv">
+                            <label for="motivoReprovacao" class="form-label">Motivo da Reprovação:</label>
+                            <textarea class="form-control" id="motivoReprovacao" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nova Vaga -->
+    <div class="modal fade" id="novaVagaModal" tabindex="-1" aria-labelledby="novaVagaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="novaVagaModalLabel">Nova Vaga de Emprego</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="novaVagaForm">
+                        <div class="mb-3">
+                            <label for="tituloVaga" class="form-label">Título:</label>
+                            <input type="text" class="form-control" id="tituloVaga" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricaoVaga" class="form-label">Descrição:</label>
+                            <textarea class="form-control" id="descricaoVaga" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="salarioVaga" class="form-label">Salário:</label>
+                            <input type="number" class="form-control" id="salarioVaga" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="requisitosVaga" class="form-label">Requisitos:</label>
+                            <textarea class="form-control" id="requisitosVaga" rows="3" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Cadastrar Vaga</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nova Tarefa -->
+    <div class="modal fade" id="novaTarefaModal" tabindex="-1" aria-labelledby="novaTarefaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="novaTarefaModalLabel">Nova Tarefa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="novaTarefaForm">
+                        <div class="mb-3">
+                            <label for="tituloTarefa" class="form-label">Título:</label>
+                            <input type="text" class="form-control" id="tituloTarefa" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricaoTarefa" class="form-label">Descrição:</label>
+                            <textarea class="form-control" id="descricaoTarefa" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="valorTarefa" class="form-label">Valor (R$):</label>
+                            <input type="number" class="form-control" id="valorTarefa" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoUsuarioTarefa" class="form-label">Tipo de Usuário:</label>
+                            <select class="form-select" id="tipoUsuarioTarefa" required>
+                                <option value="influencer">Influencer</option>
+                                <option value="empresa">Empresa</option>
+                                <option value="funcionario">Funcionário</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Criar Tarefa</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Avaliação de Entrega -->
+    <div class="modal fade" id="avaliarEntregaModal" tabindex="-1" aria-labelledby="avaliarEntregaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="avaliarEntregaModalLabel">Avaliar Entrega</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dadosEntregaAvaliacao">
+                        <!-- Dados da entrega serão exibidos aqui -->
+                    </div>
+                    <form id="avaliarEntregaForm">
+                        <input type="hidden" id="tarefaIdAvaliacao">
+                        <input type="hidden" id="entregaIdAvaliacao">
+                        <div class="mb-3">
+                            <label class="form-label">Status:</label>
+                            <select class="form-select" id="statusEntregaAvaliacao">
+                                <option value="aprovado">Aprovar</option>
+                                <option value="reprovado">Reprovar</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackEntrega" class="form-label">Feedback:</label>
+                            <textarea class="form-control" id="feedbackEntrega" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

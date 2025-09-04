@@ -1,0 +1,139 @@
+/* Estilos gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Cabeçalho */
+header {
+    padding: 2rem 0;
+}
+
+header h1 {
+    font-weight: 700;
+    color: #343a40;
+}
+
+/* Botões principais */
+.btn-lg {
+    padding: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Cores específicas para cada tipo de usuário */
+.btn-primary {
+    background-color: #4361ee;
+    border-color: #4361ee;
+}
+
+.btn-success {
+    background-color: #2a9d8f;
+    border-color: #2a9d8f;
+}
+
+.btn-info {
+    background-color: #4cc9f0;
+    border-color: #4cc9f0;
+    color: #fff;
+}
+
+.btn-warning {
+    background-color: #f8961e;
+    border-color: #f8961e;
+    color: #fff;
+}
+
+.btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+/* Cards e formulários */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    padding: 1rem;
+}
+
+.form-control {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    border-color: #4361ee;
+}
+
+/* Modais */
+.modal-content {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 1rem;
+}
+
+/* Status de consulta */
+.alert-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+    color: #0f5132;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    color: #664d03;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
+
+/* Código único */
+#codigoUnico {
+    font-family: monospace;
+    font-size: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border: 1px dashed #ced4da;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+}
