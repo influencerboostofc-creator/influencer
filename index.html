@@ -236,8 +236,8 @@
                 <h3 class="text-xl font-bold mb-4">Gerenciar Membros</h3>
                 <form id="member-form" class="bg-gray-50 p-6 rounded-xl shadow-inner mb-6 space-y-4">
                     <div>
-                        <label for="member-id-input" class="block text-sm font-medium text-gray-700">ID do Membro</label>
-                        <input type="text" id="member-id-input" required placeholder="Ex: 123-BOOSTMEMBERS" class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
+                        <label for="member-id-input-admin" class="block text-sm font-medium text-gray-700">ID do Membro</label>
+                        <input type="text" id="member-id-input-admin" required placeholder="Ex: 123-BOOSTMEMBERS" class="mt-1 block w-full p-3 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label for="member-name-input" class="block text-sm font-medium text-gray-700">Nome do Membro</label>
@@ -392,7 +392,7 @@ const paymentModalEl = document.getElementById('payment-modal');
 const paymentFormEl = document.getElementById('payment-form');
 
 const memberFormEl = document.getElementById('member-form');
-const memberIdInputAdmin = document.getElementById('member-id-input');
+const memberIdInputAdmin = document.getElementById('member-id-input-admin'); // Corrected ID
 const memberNameInputAdmin = document.getElementById('member-name-input');
 const membersListEl = document.getElementById('members-list');
 
@@ -856,8 +856,9 @@ memberFormEl.addEventListener('submit', async (e) => {
         showMessageModal('Aguarde', 'Aguarde a inicialização do sistema.');
         return;
     }
-    const memberId = memberIdInput.value.trim().toUpperCase();
-    const memberName = memberNameInput.value.trim();
+    // Correctly get the input elements from the form
+    const memberId = memberIdInputAdmin.value.trim().toUpperCase();
+    const memberName = memberNameInputAdmin.value.trim();
     if (!memberId || !memberName) {
         showMessageModal('Erro', 'Por favor, preencha todos os campos.');
         return;
